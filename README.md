@@ -51,9 +51,9 @@ This is a Vite static site. Build output is in `dist/`.
 
 1. Push this repo to GitHub.
 2. In GitHub: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-3. In GitHub: **Settings → Secrets and variables → Actions → Variables**, add:
-   - `VITE_SUPABASE_URL` (optional, for global Guestbook)
-   - `VITE_SUPABASE_ANON_KEY` (optional, for global Guestbook)
+3. (Optional, for global Guestbook) In GitHub: **Settings → Secrets and variables → Actions**, add either as **Variables** or **Secrets**:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY` (use the anon/public key, not a service role key)
 4. Push to `main` to trigger deploy.
 
 Your site will be available at: `https://<username>.github.io/<repo>/`
