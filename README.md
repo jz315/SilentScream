@@ -20,6 +20,8 @@ View your app in AI Studio: https://ai.studio/apps/drive/1hf_0EaPimHweIrsoRHXy6r
    - (Optional) Fill in `GEMINI_API_KEY` to enable AI
 3. Run the app:
    `npm run dev`
+4. (Optional) Type-check:
+   `npm run typecheck`
 
 ## Database (Supabase, for Guestbook)
 
@@ -44,6 +46,38 @@ The `Guestbook` component supports two modes:
 ## Deploy
 
 This is a Vite static site. Build output is in `dist/`.
+
+## Deploy (GitHub Pages, standard)
+
+1. Push this repo to GitHub.
+2. In GitHub: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+3. In GitHub: **Settings → Secrets and variables → Actions → Variables**, add:
+   - `VITE_SUPABASE_URL` (optional, for global Guestbook)
+   - `VITE_SUPABASE_ANON_KEY` (optional, for global Guestbook)
+4. Push to `main` to trigger deploy.
+
+Your site will be available at: `https://<username>.github.io/<repo>/`
+
+## Single HTML (offline / shareable)
+
+If you can't use Vercel (e.g. mainland China), you can export a single self-contained HTML file:
+
+1. Install deps: `npm install`
+2. Build: `npm run build:single`
+3. Share `dist/silent-scream.html` (receiver can double-click to open)
+
+Note: the AI feature (`/api/gemini`) requires a backend, so it will be disabled in the single-file build unless you provide your own server.
+Note: the Guestbook is in **local mode** in `build:single` (messages are stored in the viewer's browser only).
+
+### Single HTML + global Guestbook (Supabase)
+
+If you want the Guestbook to be globally synced via Supabase (still exporting a single HTML file):
+
+1. Configure Supabase env vars in `.env.local`:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+2. Build: `npm run build:single:online`
+3. Share `dist/silent-scream-online.html`
 
 ### Option A: Vercel (recommended)
 
@@ -74,4 +108,6 @@ This is a Vite static site. Build output is in `dist/`.
 
 ### Important note about `GEMINI_API_KEY`
 
-This project currently calls Gemini directly from the browser, so `GEMINI_API_KEY` will be embedded in the built JS bundle at build time. If you need the key to stay secret, move the Gemini call behind a serverless function (e.g. Vercel Functions / Netlify Functions / Supabase Edge Functions) and call that from the frontend.
+This project calls Gemini through a serverless proxy at `/api/gemini` (Vercel Function), so `GEMINI_API_KEY` stays on the server and is not embedded in the frontend bundle.
+
+Local development note: the AI feature requires the `/api/gemini` function, so run with `vercel dev` (after setting `GEMINI_API_KEY`) if you want AI locally.

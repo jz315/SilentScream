@@ -4,7 +4,7 @@ import { MessageSquare, Send, User, Bot, Loader2 } from 'lucide-react';
 import { ChatMessage } from '../types';
 
 const AIListener = () => {
-  const isAiEnabled = Boolean(process.env.API_KEY);
+  const [isAiEnabled, setIsAiEnabled] = useState<boolean>(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -16,6 +16,20 @@ const AIListener = () => {
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch('/api/gemini', { method: 'GET', signal: controller.signal })
+      .then(async (r) => {
+        if (!r.ok) return false;
+        const data = await r.json().catch(() => null);
+        return Boolean(data?.ok);
+      })
+      .then((ok) => setIsAiEnabled(ok))
+      .catch(() => setIsAiEnabled(false));
+
+    return () => controller.abort();
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -121,7 +135,7 @@ const AIListener = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyPress}
-                placeholder={isAiEnabled ? "说点什么吧，我在这里..." : "AI 功能未启用（GEMINI_API_KEY 未配置）"}
+                placeholder={isAiEnabled ? "说点什么吧，我在这里..." : "AI 功能未启用（未部署 /api/gemini 或 GEMINI_API_KEY 未配置）"}
                 className="w-full bg-slate-800 text-slate-200 placeholder-slate-500 rounded-xl pl-4 pr-12 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none h-14"
                 disabled={!isAiEnabled || isLoading}
               />
@@ -138,7 +152,7 @@ const AIListener = () => {
             </p>
             {!isAiEnabled && (
               <p className="text-xs text-slate-600 mt-2 text-center">
-                如需开启 AI，请在 `.env.local`（本地）或 Vercel 环境变量（部署）设置 `GEMINI_API_KEY`。
+                如需开启 AI，请部署到 Vercel 并在环境变量中设置 `GEMINI_API_KEY`（本地可用 `vercel dev` 运行）。
               </p>
             )}
           </div>

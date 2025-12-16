@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Send, Hash, Clock, User, MapPin, Wifi, WifiOff } from 'lucide-react';
-import { supabase } from '../services/supabaseClient';
+import { getSupabaseClient, hasSupabaseConfig } from '../services/supabaseClient';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 // ==========================================
 // 🔴 如何开启真实留言板 (HOW TO MAKE IT REAL)
@@ -78,44 +79,56 @@ const Guestbook: React.FC = () => {
   const [identity, setIdentity] = useState(IDENTITIES[0]);
   const [province, setProvince] = useState(PROVINCES[0]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isRealtime, setIsRealtime] = useState(false);
+  const [isRealtime, setIsRealtime] = useState(hasSupabaseConfig());
 
   // Initial Load
   useEffect(() => {
-    if (supabase) {
-      // --- REAL MODE: Fetch from Supabase ---
-      setIsRealtime(true);
-      fetchSupabaseMessages();
-      
-      // Real-time subscription
-      const channel = supabase
-        .channel('public:messages')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
-          const newMsg = payload.new as any;
-          const formatted: GuestMessage = {
-            id: newMsg.id.toString(),
-            name: newMsg.name,
-            identity: newMsg.identity,
-            content: newMsg.content,
-            province: newMsg.province || '未知',
-            date: '刚刚'
-          };
-          setMessages(prev => [formatted, ...prev]);
-        })
-        .subscribe();
+    let cancelled = false;
+    let channel: RealtimeChannel | null = null;
 
-      return () => { supabase.removeChannel(channel); };
-    } else {
-      // --- DEMO MODE: Load from LocalStorage ---
-      const saved = localStorage.getItem('echo_wall_messages_v2');
-      if (saved) {
-        setMessages(JSON.parse(saved));
+    (async () => {
+      const supabase = await getSupabaseClient();
+      if (cancelled) return;
+
+      if (supabase) {
+        setIsRealtime(true);
+        fetchSupabaseMessages(supabase);
+
+        channel = supabase
+          .channel('public:messages')
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
+            const newMsg = payload.new as any;
+            const formatted: GuestMessage = {
+              id: newMsg.id.toString(),
+              name: newMsg.name,
+              identity: newMsg.identity,
+              content: newMsg.content,
+              province: newMsg.province || '未知',
+              date: '刚刚'
+            };
+            setMessages(prev => [formatted, ...prev]);
+          })
+          .subscribe();
+      } else {
+        setIsRealtime(false);
+        const saved = localStorage.getItem('echo_wall_messages_v2');
+        if (saved) {
+          setMessages(JSON.parse(saved));
+        }
       }
-    }
+    })();
+
+    return () => {
+      cancelled = true;
+      if (channel) {
+        getSupabaseClient().then((supabase) => {
+          if (supabase) supabase.removeChannel(channel);
+        });
+      }
+    };
   }, []);
 
-  const fetchSupabaseMessages = async () => {
-    if (!supabase) return;
+  const fetchSupabaseMessages = async (supabase: any) => {
     const { data, error } = await supabase
       .from('messages')
       .select('*')
@@ -150,6 +163,7 @@ const Guestbook: React.FC = () => {
       date: '刚刚'
     };
 
+    const supabase = await getSupabaseClient();
     if (supabase) {
       // --- REAL MODE: Insert into DB ---
       const { error } = await supabase.from('messages').insert([
@@ -196,6 +210,11 @@ const Guestbook: React.FC = () => {
             念念不忘，必有回响。<br/>
             留下你的坐标，证明我们不仅是孤岛。
           </p>
+          {!isRealtime && (
+            <p className="mt-4 text-xs text-slate-500 max-w-2xl mx-auto">
+              当前是本地模式：留言只保存在你自己的浏览器里（localStorage），发给别人他们看不到；要实现全网同步需要部署后端 + 数据库（Supabase）。
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
