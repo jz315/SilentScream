@@ -69,10 +69,11 @@ export const ShareCard = () => {
   };
 
   return (
-    <div className="py-20 px-4 bg-slate-900 border-t border-slate-800">
+    <div className="py-24 px-4 bg-slate-950 border-t border-slate-900/60 relative overflow-hidden">
+      <div className="absolute left-1/2 top-0 h-[420px] w-[900px] -translate-x-1/2 bg-gradient-to-b from-red-900/10 via-transparent to-transparent blur-2xl pointer-events-none"></div>
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-white mb-4">让世界听见</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight text-balance">让世界听见</h2>
           <p className="text-slate-400 max-w-xl mx-auto">
             沉默不会带来改变。生成你的“生存诊断单”，保存并分享。
             <br />让更多人看到这不仅是你一个人的战斗。
@@ -83,17 +84,20 @@ export const ShareCard = () => {
           
           {/* Controls */}
           <div className="w-full md:w-1/3 space-y-6">
-            <div className="bg-slate-800/50 p-6 rounded-xl border border-slate-700">
-              <label className="block text-sm text-slate-400 mb-2">你的身份</label>
+            <div className="glass-panel p-6 rounded-2xl relative overflow-hidden border border-white/5">
+               {/* Decorative Gradient */}
+               <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-2xl transform translate-x-10 -translate-y-10 pointer-events-none"></div>
+
+              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">你的身份</label>
               <div className="flex flex-wrap gap-2 mb-6">
                 {titles.map((t) => (
                   <button
                     key={t}
                     onClick={() => setTitle(t)}
-                    className={`px-3 py-1 text-xs rounded-full border transition-all ${
+                    className={`px-3 py-1.5 text-xs rounded-lg border transition-all duration-300 ${
                       title === t 
-                        ? 'bg-red-900/30 border-red-500 text-red-200' 
-                        : 'bg-slate-900 border-slate-700 text-slate-500 hover:border-slate-500'
+                        ? 'bg-red-900/40 border-red-500 text-red-100 shadow-[0_0_10px_rgba(239,68,68,0.2)]' 
+                        : 'bg-slate-800/50 border-slate-700 text-slate-400 hover:border-slate-500 hover:text-slate-200'
                     }`}
                   >
                     {t}
@@ -101,18 +105,21 @@ export const ShareCard = () => {
                 ))}
               </div>
 
-              <label className="block text-sm text-slate-400 mb-2">你的呐喊</label>
-              <textarea
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                className="w-full h-32 bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 text-sm focus:outline-none focus:border-red-500/50 resize-none mb-4"
-              />
+              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">你的呐喊</label>
+              <div className="relative mb-4 group">
+                  <div className="absolute inset-0 bg-red-500/10 rounded-lg blur opacity-0 group-focus-within:opacity-100 transition-opacity"></div>
+                  <textarea
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    className="relative w-full h-32 bg-slate-900/60 border border-white/10 rounded-xl p-4 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500/30 resize-none transition-all"
+                  />
+              </div>
               
               <button 
                 onClick={handleRandom}
-                className="w-full flex items-center justify-center gap-2 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg transition-colors text-sm"
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition-all text-sm group"
               >
-                <RefreshCw size={14} /> 随机生成文案
+                <RefreshCw size={14} className="group-hover:rotate-180 transition-transform duration-500"/> 随机生成文案
               </button>
             </div>
 
@@ -120,7 +127,7 @@ export const ShareCard = () => {
               <button 
                 onClick={handleDownload}
                 disabled={isGenerating}
-                className="w-full py-3 bg-red-700 hover:bg-red-600 text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-900/20 disabled:opacity-50"
+                className="w-full py-3.5 bg-gradient-to-r from-red-800 to-red-700 hover:from-red-700 hover:to-red-600 text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(153,27,27,0.3)] hover:shadow-[0_0_30px_rgba(153,27,27,0.5)] transform hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none"
               >
                 {isGenerating ? <Loader2 size={20} className="animate-spin" /> : <Camera size={20} />}
                 {isGenerating ? "生成中..." : "保存为图片"}
@@ -128,10 +135,10 @@ export const ShareCard = () => {
 
               <button 
                 onClick={handleCopyLink}
-                className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-medium transition-all flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-slate-800/70 hover:bg-slate-700/70 text-slate-300 rounded-xl font-medium transition-all flex items-center justify-center gap-2 border border-white/10 hover:border-white/20"
               >
-                {copied ? <Check size={18} /> : <Copy size={18} />}
-                {copied ? "链接已复制" : "复制网站链接"}
+                {copied ? <Check size={18} className="text-green-400"/> : <Copy size={18} />}
+                {copied ? <span className="text-green-400">链接已复制</span> : "复制网站链接"}
               </button>
             </div>
           </div>

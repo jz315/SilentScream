@@ -1,30 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { Flame, Users, Fingerprint } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Flame, Users, Feather, BookOpen } from 'lucide-react';
 
 const MANIFESTO_TEXT = [
-  "我们拒绝成为分数的奴隶。",
-  "我们拒绝用健康换取毫无意义的排名。",
-  "在这台巨大的绞肉机停止转动之前，",
-  "我们发誓：",
-  "哪怕在深夜，也要仰望星空。",
-  "哪怕被压弯，决不被折断。",
-  "我不止是一个学号，我是鲜活的生命。",
-  "活着，清醒地活着，就是最大的反抗。"
+  "我们身处分数的牢笼，",
+  "但思想依然自由。",
+  "在这巨大的机器轰鸣声中，",
+  "我们郑重立约：",
+  "拒绝以排名论断人的尊严，",
+  "拒绝用健康换取虚幻的数字，",
+  "在机械的重复中，保留思考的火种，",
+  "不仅要活着，更要清醒地活着。"
 ];
 
 const Manifesto: React.FC = () => {
   const [signedCount, setSignedCount] = useState(14892); // Fake initial seed
   const [hasSigned, setHasSigned] = useState(false);
   const [visibleLines, setVisibleLines] = useState<number>(0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Typewriter effect logic
   useEffect(() => {
-    if (visibleLines < MANIFESTO_TEXT.length) {
-      const timeout = setTimeout(() => {
-        setVisibleLines(prev => prev + 1);
-      }, 800); // Speed of line appearance
-      return () => clearTimeout(timeout);
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && visibleLines === 0) {
+        let currentLine = 0;
+        const interval = setInterval(() => {
+          setVisibleLines(prev => {
+            if (prev < MANIFESTO_TEXT.length) return prev + 1;
+            clearInterval(interval);
+            return prev;
+          });
+          currentLine++;
+          if (currentLine >= MANIFESTO_TEXT.length) clearInterval(interval);
+        }, 600);
+      }
+    }, { threshold: 0.3 });
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
     }
+
+    return () => observer.disconnect();
   }, [visibleLines]);
 
   // Load state from local storage
@@ -32,10 +47,18 @@ const Manifesto: React.FC = () => {
     const signed = localStorage.getItem('dawn_manifesto_signed');
     if (signed) {
       setHasSigned(true);
-      // If user already signed, show all lines immediately
       setVisibleLines(MANIFESTO_TEXT.length);
     }
   }, []);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    containerRef.current.style.setProperty('--mouse-x', `${x}px`);
+    containerRef.current.style.setProperty('--mouse-y', `${y}px`);
+  };
 
   const handleSign = () => {
     if (hasSigned) return;
@@ -46,40 +69,43 @@ const Manifesto: React.FC = () => {
     
     // Trigger vibration if on mobile
     if (navigator.vibrate) {
-      navigator.vibrate(50);
+      navigator.vibrate([50, 30, 50]);
     }
   };
 
   return (
-    <div className="py-24 px-4 bg-slate-950 relative overflow-hidden border-t border-slate-900">
-      {/* Background Ambience */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-orange-900/10 via-slate-950 to-slate-950 pointer-events-none"></div>
+    <div className="h-screen flex items-center justify-center px-4 bg-slate-950 relative overflow-hidden border-t border-slate-900/50" onMouseMove={handleMouseMove}>
       
-      <div className="max-w-3xl mx-auto relative z-10 text-center">
-        <div className="flex justify-center mb-6">
-            <div className={`p-4 rounded-full bg-orange-900/20 border border-orange-700/50 ${hasSigned ? 'shadow-[0_0_50px_rgba(234,88,12,0.5)]' : ''} transition-shadow duration-1000`}>
-                <Flame size={40} className={`${hasSigned ? 'text-orange-500 animate-pulse' : 'text-slate-600'}`} fill={hasSigned ? "currentColor" : "none"} />
+      <div className="max-w-4xl w-full mx-auto relative z-10 text-center">
+        
+        {/* Header Icon */}
+        <div className="flex justify-center mb-8">
+            <div className={`relative p-5 rounded-full bg-slate-900 border border-slate-700 ${hasSigned ? 'shadow-[0_0_60px_rgba(255,255,255,0.1)]' : ''} transition-all duration-700`}>
+                <BookOpen size={32} className={`${hasSigned ? 'text-slate-100' : 'text-slate-500'} transition-colors duration-500`} strokeWidth={1.5} />
             </div>
         </div>
 
-        <h2 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-200 to-red-400 mb-12 tracking-tight">
-          破晓计划
+        <h2 className="text-5xl md:text-6xl font-black text-slate-100 mb-16 tracking-tighter">
+          独立思考者公约
         </h2>
 
-        {/* The Manifesto Text */}
-        <div className="bg-slate-900/80 p-8 md:p-12 rounded-2xl border border-slate-800 shadow-2xl mb-10 text-left min-h-[400px] flex flex-col justify-center relative overflow-hidden">
-          {/* Paper texture overlay */}
-          <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/black-linen.png')] pointer-events-none"></div>
-          
-          <div className="space-y-6 font-serif text-lg md:text-2xl leading-relaxed text-slate-300">
+        {/* The Manifesto Text Card */}
+        <div 
+          ref={containerRef}
+          className="glass-panel p-10 md:p-16 rounded-sm mb-16 text-left min-h-[400px] flex flex-col justify-center relative spotlight-card group border border-slate-800"
+        >
+          {/* Paper Texture Overlay */}
+          <div className="absolute inset-0 opacity-[0.05] bg-repeat mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'4\' height=\'4\' viewBox=\'0 0 4 4\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M1 3h1v1H1V3zm2-2h1v1H3V1z\' fill=\'%23ffffff\' fill-opacity=\'1\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")' }}></div>
+
+          <div className="space-y-8 font-serif text-xl md:text-3xl leading-relaxed text-slate-300 relative z-10 tracking-wide text-center">
             {MANIFESTO_TEXT.map((line, index) => (
               <p 
                 key={index} 
-                className={`transition-all duration-1000 transform ${
+                className={`transition-all duration-700 transform ${
                   index < visibleLines 
-                    ? 'opacity-100 translate-y-0' 
-                    : 'opacity-0 translate-y-4'
-                } ${index === MANIFESTO_TEXT.length - 1 ? 'text-orange-400 font-bold mt-8' : ''}`}
+                    ? 'opacity-100 translate-y-0 blur-0' 
+                    : 'opacity-0 translate-y-8 blur-sm'
+                } ${index === MANIFESTO_TEXT.length - 1 ? 'text-slate-100 font-bold pt-8 scale-105 origin-center' : ''}`}
               >
                 {line}
               </p>
@@ -88,30 +114,36 @@ const Manifesto: React.FC = () => {
         </div>
 
         {/* Action Area */}
-        <div className="flex flex-col items-center space-y-6">
+        <div className="flex flex-col items-center space-y-8">
           <button
             onClick={handleSign}
             disabled={hasSigned}
-            className={`group relative px-8 py-4 rounded-full font-bold text-lg transition-all duration-500 overflow-hidden ${
+            className={`group relative overflow-hidden transition-all duration-500 ${
               hasSigned 
-                ? 'bg-slate-800 text-orange-500 cursor-default ring-2 ring-orange-900/50' 
-                : 'bg-gradient-to-r from-orange-700 to-red-800 text-white hover:scale-105 hover:shadow-[0_0_30px_rgba(234,88,12,0.4)]'
+                ? 'bg-transparent text-slate-500 cursor-default px-8 py-4 border border-slate-800 rounded-sm' 
+                : 'bg-slate-100 text-slate-900 px-12 py-5 hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] rounded-sm'
             }`}
           >
-            <div className="flex items-center gap-3 relative z-10">
-              {hasSigned ? <Fingerprint size={24} /> : <Flame size={24} />}
-              <span>{hasSigned ? "契约已缔结" : "加入破晓计划"}</span>
+            {/* Button Content */}
+            <div className="flex items-center gap-3 relative z-10 font-bold text-lg md:text-xl tracking-wider uppercase">
+              {hasSigned ? (
+                <>
+                  <Feather size={24} className="text-slate-500" />
+                  <span className="font-serif italic">已郑重立约</span>
+                </>
+              ) : (
+                <>
+                  <Feather size={24} />
+                  <span>签署公约</span>
+                </>
+              )}
             </div>
-            {/* Hover Shine Effect */}
-            {!hasSigned && (
-               <div className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 group-hover:animate-[shine_1s_ease-in-out]"></div>
-            )}
           </button>
 
-          <div className="flex items-center gap-2 text-slate-500 font-mono text-sm">
-            <Users size={16} />
-            <span className="tabular-nums">{signedCount.toLocaleString()}</span>
-            <span>位清醒者已加入</span>
+          <div className="flex items-center gap-3 text-slate-500 font-mono text-sm tracking-wider">
+            <Users size={14} />
+            <span className="tabular-nums text-slate-400">{signedCount.toLocaleString()}</span>
+            <span>位觉醒者</span>
           </div>
         </div>
       </div>

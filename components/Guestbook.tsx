@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Send, Hash, Clock, User, MapPin, Wifi, WifiOff } from 'lucide-react';
+import { Send, Hash, Clock, User, MapPin, Wifi, WifiOff, Globe } from 'lucide-react';
 import { getSupabaseClient, hasSupabaseConfig } from '../services/supabaseClient';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 
@@ -196,75 +196,73 @@ const Guestbook: React.FC = () => {
   };
 
   return (
-    <div className="py-20 px-4 bg-slate-950 border-t border-slate-900">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-white mb-4 flex items-center justify-center gap-3">
+    <div className="py-24 px-4 bg-slate-950 border-t border-slate-900 relative">
+      <div className="max-w-6xl mx-auto relative z-10">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold text-white mb-4 flex items-center justify-center gap-3">
+            <Globe size={32} className="text-slate-500"/>
             回声墙
-            <span className={`text-xs px-2 py-1 rounded-full border flex items-center gap-1 ${isRealtime ? 'bg-green-900/30 border-green-700 text-green-400' : 'bg-slate-800 border-slate-700 text-slate-500'}`}>
-              {isRealtime ? <Wifi size={12}/> : <WifiOff size={12}/>}
-              {isRealtime ? "已联通全网" : "本地模式"}
-            </span>
           </h2>
-          <p className="text-slate-400">
-            念念不忘，必有回响。<br/>
-            留下你的坐标，证明我们不仅是孤岛。
+           <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-900 rounded-full border border-slate-800">
+             <span className={`w-2 h-2 rounded-full ${isRealtime ? 'bg-green-500 animate-pulse' : 'bg-slate-500'}`}></span>
+             <span className="text-xs text-slate-400 font-mono uppercase tracking-wider">
+               {isRealtime ? "Live Connection" : "Local Mode"}
+             </span>
+           </div>
+          <p className="text-slate-400 mt-6 text-lg max-w-2xl mx-auto">
+            念念不忘，必有回响。留下你的坐标，证明我们不仅是孤岛。
           </p>
-          {!isRealtime && (
-            <p className="mt-4 text-xs text-slate-500 max-w-2xl mx-auto">
-              当前是本地模式：留言只保存在你自己的浏览器里（localStorage），发给别人他们看不到；要实现全网同步需要部署后端 + 数据库（Supabase）。
-            </p>
-          )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
           
           {/* Input Form */}
-          <div className="md:col-span-1">
-            <div className="bg-slate-900 p-6 rounded-xl border border-slate-800 sticky top-8">
-              <h3 className="text-xl font-semibold text-slate-200 mb-4 flex items-center gap-2">
+          <div className="md:col-span-4 sticky top-8">
+            <div className="glass-panel p-6 rounded-2xl">
+              <h3 className="text-lg font-bold text-slate-200 mb-6 flex items-center gap-2">
                 <Send size={18} className="text-red-500" />
                 发出信号
               </h3>
               
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label className="block text-xs text-slate-500 mb-1">代号 (可选)</label>
+                  <label className="block text-xs text-slate-400 uppercase tracking-wider mb-2">Code Name</label>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="例如：深夜守望者"
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-red-500 transition-colors"
+                    className="w-full bg-slate-800/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500/30 transition-all"
                     maxLength={10}
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-xs text-slate-500 mb-1">IP 属地</label>
-                      <select 
+                <div>
+                  <label className="block text-xs text-slate-400 uppercase tracking-wider mb-2">Location</label>
+                  <div className="relative">
+                    <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                    <select 
                         value={province}
                         onChange={(e) => setProvince(e.target.value)}
-                        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-2 text-sm text-slate-200 focus:outline-none focus:border-red-500"
-                      >
+                        className="w-full bg-slate-800/40 border border-white/10 rounded-xl pl-9 pr-4 py-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500/30 appearance-none cursor-pointer"
+                    >
                         {PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
-                      </select>
-                    </div>
+                    </select>
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs text-slate-500 mb-1">身份信号</label>
+                  <label className="block text-xs text-slate-400 uppercase tracking-wider mb-2">Identity Signal</label>
                   <div className="flex flex-wrap gap-2">
                     {IDENTITIES.map((id) => (
                       <button
                         key={id}
                         type="button"
                         onClick={() => setIdentity(id)}
-                        className={`text-xs px-2 py-1 rounded border transition-all ${
+                        className={`text-xs px-3 py-1.5 rounded-md border transition-all ${
                           identity === id 
-                            ? 'bg-slate-700 border-slate-500 text-white' 
-                            : 'bg-slate-800 border-slate-700 text-slate-500 hover:border-slate-600'
+                            ? 'bg-slate-700 text-white border-slate-500 shadow-sm' 
+                            : 'bg-slate-800/30 text-slate-500 border-slate-700 hover:border-slate-600 hover:text-slate-300'
                         }`}
                       >
                         {id}
@@ -274,12 +272,12 @@ const Guestbook: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs text-slate-500 mb-1">内容</label>
+                  <label className="block text-xs text-slate-400 uppercase tracking-wider mb-2">Message</label>
                   <textarea
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     placeholder="写下你的压抑、痛苦，或者希望..."
-                    className="w-full h-32 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-red-500 transition-colors resize-none"
+                    className="w-full h-32 bg-slate-800/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500/30 transition-all resize-none"
                     required
                   />
                 </div>
@@ -287,65 +285,60 @@ const Guestbook: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting || !content.trim()}
-                  className="w-full bg-red-900/80 hover:bg-red-800 text-red-100 py-2.5 rounded-lg font-medium transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-red-900/80 to-red-800/80 hover:from-red-800 hover:to-red-700 text-white py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(153,27,27,0.22)] hover:shadow-[0_0_34px_rgba(153,27,27,0.35)] transform hover:-translate-y-0.5"
                 >
-                  {isSubmitting ? <span className="animate-pulse">发送中...</span> : <><Send size={16} /> 发送回声</>}
+                  {isSubmitting ? <span className="animate-pulse">Sending...</span> : <><Send size={16} /> 发送回声</>}
                 </button>
               </form>
-              
-              {!isRealtime && (
-                 <p className="mt-4 text-[10px] text-slate-600 text-center border-t border-slate-800 pt-2">
-                   当前为本地演示模式。开发者需配置 Supabase 以开启全球同步。
-                 </p>
-              )}
             </div>
           </div>
 
           {/* Message List */}
-          <div className="md:col-span-2">
-            <div className="grid grid-cols-1 gap-4">
+          <div className="md:col-span-8">
+            <div className="grid grid-cols-1 gap-6">
               {messages.map((msg) => (
-                <div key={msg.id} className="bg-slate-900/50 p-5 rounded-xl border border-slate-800 hover:border-slate-700 transition-colors group">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 border border-slate-700 shrink-0">
-                        <User size={16} />
+                <div key={msg.id} className="glass-panel p-6 rounded-xl hover:bg-slate-800/40 transition-colors group relative overflow-hidden">
+                  <div className="flex justify-between items-start mb-4 relative z-10">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center text-slate-400 border border-slate-600 shrink-0 shadow-inner">
+                        <User size={18} />
                       </div>
                       <div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-slate-200 font-medium text-sm">{msg.name}</span>
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <span className="text-slate-100 font-bold text-base">{msg.name}</span>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800/80 text-slate-400 border border-slate-700/50 uppercase tracking-wide font-medium">
                             {msg.identity}
                           </span>
-                           <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-900 text-slate-500 border border-slate-800 flex items-center gap-1">
-                            <MapPin size={10} />
-                            {msg.province}
-                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
+                           <span className="flex items-center gap-1"><MapPin size={10} /> {msg.province}</span>
+                           <span className="w-1 h-1 rounded-full bg-slate-600"></span>
+                           <span className="flex items-center gap-1"><Clock size={10} /> {msg.date}</span>
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-slate-600 shrink-0">
-                      <Clock size={12} />
-                      <span>{msg.date}</span>
+                  </div>
+                  
+                  <div className="relative z-10 pl-14">
+                    <p className="text-slate-300 text-sm leading-7 whitespace-pre-wrap font-serif">
+                        {msg.content}
+                    </p>
+                    
+                    <div className="mt-4 flex items-center gap-4 opacity-50 group-hover:opacity-100 transition-opacity">
+                        <button className="text-xs text-slate-500 hover:text-red-400 flex items-center gap-1.5 transition-colors px-2 py-1 rounded hover:bg-slate-800">
+                            <Hash size={12} />
+                            <span>共鸣</span>
+                        </button>
                     </div>
                   </div>
-                  
-                  <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap pl-12 border-l-2 border-slate-800 group-hover:border-red-900/50 transition-colors">
-                    {msg.content}
-                  </p>
-                  
-                  <div className="mt-4 pl-12 flex items-center gap-4">
-                     {/* Simulated reaction buttons */}
-                     <button className="text-xs text-slate-600 hover:text-red-400 flex items-center gap-1 transition-colors">
-                        <Hash size={12} />
-                        <span>共鸣</span>
-                     </button>
-                  </div>
+
+                  {/* Decorative faint quote mark */}
+                  <div className="absolute top-4 right-6 text-8xl font-serif text-slate-800/30 select-none pointer-events-none">”</div>
                 </div>
               ))}
               
               {messages.length === 0 && (
-                <div className="text-center py-10 text-slate-600">
+                <div className="text-center py-20 text-slate-600 glass-panel rounded-xl">
                   <p>这里还很安静... 做第一个发声的人吧。</p>
                 </div>
               )}
