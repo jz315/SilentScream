@@ -14,18 +14,13 @@ const App: React.FC = () => {
   const timelineRef = React.useRef<HTMLElement>(null);
 
   React.useEffect(() => {
-    if (isAwakened && timelineRef.current) {
-      // Small delay to allow DOM to update and IronHouse animation to play
-      setTimeout(() => {
-        timelineRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }, 2000);
-    }
+    // Keep the ref for potential future use; no auto-scroll on awaken.
   }, [isAwakened]);
 
   return (
     <div
       id="app-scroll"
-      className={`h-screen overflow-y-scroll bg-slate-950 text-slate-200 font-sans antialiased tracking-[-0.01em] selection:bg-red-500/30 selection:text-red-200 scroll-smooth ${
+      className={`h-screen overflow-y-scroll bg-[#050505] text-neutral-200 font-sans antialiased tracking-wide scroll-smooth ${
         isAwakened ? 'snap-none' : 'snap-y snap-mandatory'
       }`}
     >
