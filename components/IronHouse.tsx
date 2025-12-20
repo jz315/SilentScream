@@ -42,6 +42,7 @@ const DIALOGUES = [
 
 interface IronHouseProps {
   onBreak?: () => void;
+  onEngage?: () => void;
 }
 
 interface ShardPiece {
@@ -62,7 +63,7 @@ interface Particle {
   color: string;
 }
 
-const IronHouse: React.FC<IronHouseProps> = ({ onBreak }) => {
+const IronHouse: React.FC<IronHouseProps> = ({ onBreak, onEngage }) => {
   const totalHits = 23;
   const [hits, setHits] = useState(0);
   const [shards, setShards] = useState<ShardPiece[]>([]);
@@ -149,6 +150,7 @@ const IronHouse: React.FC<IronHouseProps> = ({ onBreak }) => {
 
     // 第一次点击：显示“打破它”，隐藏初始标题
     if (hits === 0) {
+      onEngage?.();
       setShowCommand(true);
       setTimeout(() => setShowCommand(false), 1200);
     }
@@ -213,6 +215,14 @@ const IronHouse: React.FC<IronHouseProps> = ({ onBreak }) => {
 
       {/* Background Dawn */}
       <div className={`absolute inset-0 bg-gradient-to-b from-blue-50 via-orange-100 to-white transition-opacity duration-[3000ms] ${isBroken ? 'opacity-100' : 'opacity-0'}`} />
+
+      {/* Giant Watermark Character*/}
+      <div 
+        className={`absolute top-20 right-10 md:right-20 pointer-events-none select-none transition-opacity duration-1000 overflow-hidden 
+          ${isBroken ? 'opacity-0' : 'opacity-[0.03]'}`}
+      >
+        <span className="font-serif font-bold text-[15rem] leading-none text-white vertical-rl">打破</span>
+      </div>
 
       {/* Main Container */}
       <div

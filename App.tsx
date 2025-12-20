@@ -11,49 +11,57 @@ import Footer from './components/Footer';
 
 const App: React.FC = () => {
   const [isAwakened, setIsAwakened] = React.useState(false);
+  const [isIronhouseLocked, setIsIronhouseLocked] = React.useState(false);
   const timelineRef = React.useRef<HTMLElement>(null);
 
-  React.useEffect(() => {
-    // Keep the ref for potential future use; no auto-scroll on awaken.
+  const isScrollLocked = isIronhouseLocked;
+
+  const handleIronhouseEngage = React.useCallback(() => {
+    if (isAwakened) return;
+    setIsIronhouseLocked(true);
   }, [isAwakened]);
+
+  const handleIronhouseBreak = React.useCallback(() => {
+    setIsIronhouseLocked(false);
+    setIsAwakened(true);
+  }, []);
 
   return (
     <div
       id="app-scroll"
-      className={`h-screen overflow-y-scroll bg-[#050505] text-neutral-200 font-sans antialiased tracking-wide scroll-smooth ${isAwakened ? 'snap-none' : 'snap-y snap-mandatory'
-        }`}
+      className={`h-screen ${isScrollLocked ? 'overflow-y-hidden' : 'overflow-y-scroll'} bg-[#050505] text-neutral-200 font-sans antialiased tracking-wide scroll-smooth`}
     >
       <div className="vignette" />
 
-      <section className="snap-start h-screen w-full relative">
+      <section className="h-screen w-full relative">
         <Hero />
       </section>
 
-      <section ref={timelineRef} className="snap-start min-h-screen w-full relative">
+      <section ref={timelineRef} className="min-h-screen w-full relative">
         <Timeline />
       </section>
 
-      <section id="ironhouse" className="snap-start h-screen w-full relative">
-        <IronHouse onBreak={() => setIsAwakened(true)} />
+      <section id="ironhouse" className="h-screen w-full relative">
+        <IronHouse onEngage={handleIronhouseEngage} onBreak={handleIronhouseBreak} />
       </section>
 
       {isAwakened && (
         <>
 
 
-          <section className="snap-start min-h-screen w-full relative">
+          <section className="min-h-screen w-full relative">
             <DataVisuals />
           </section>
 
-          <section className="snap-start min-h-screen w-full relative">
+          <section className="min-h-screen w-full relative">
             <Manifesto />
           </section>
 
-          <section className="snap-start min-h-screen w-full relative">
+          <section className="min-h-screen w-full relative">
             <AIListener />
           </section>
 
-          <div className="snap-start">
+          <div>
             <ShareCard />
             <Guestbook />
             <Footer />

@@ -85,26 +85,26 @@ const AIListener = () => {
   };
 
   return (
-    <div className="py-24 px-4 bg-[#050505] relative overflow-hidden border-t border-neutral-900/30">
+    <div className="py-16 sm:py-24 px-3 sm:px-4 bg-[#050505] relative overflow-hidden border-t border-neutral-900/30">
         {/* Decorative background - Subtle */}
         <div className="absolute top-1/2 left-1/2 w-[800px] h-[800px] bg-neutral-900/20 rounded-full blur-[120px] transform -translate-x-1/2 -translate-y-1/2 pointer-events-none mix-blend-screen"></div>
 
       <div className="max-w-4xl mx-auto relative z-10">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center p-5 rounded-full mb-8 border border-neutral-800 bg-[#0a0a0a]">
+        <div className="text-center mb-10 sm:mb-12">
+          <div className="inline-flex items-center justify-center p-4 sm:p-5 rounded-full mb-6 sm:mb-8 border border-neutral-800 bg-[#0a0a0a]">
             <MessageSquare className="text-neutral-400" size={24} strokeWidth={1.5} />
           </div>
-          <h2 className="text-3xl md:text-4xl font-serif font-medium text-neutral-200 mb-4 tracking-wide">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-medium text-neutral-200 mb-3 sm:mb-4 tracking-wide">
             Tree Hole
           </h2>
-          <p className="text-neutral-500 font-serif text-lg italic">
+          <p className="text-neutral-500 font-serif text-base sm:text-lg italic">
             这里没有分数，没有排名，只有倾听。
           </p>
         </div>
 
-        <div className="glass-panel rounded-sm flex flex-col h-[65vh] sm:h-[70vh] min-h-[420px] sm:min-h-[560px] max-h-[700px] sm:max-h-[760px] overflow-hidden border border-white/5 bg-[#0a0a0a]/60 shadow-2xl">
+        <div className="glass-panel rounded-sm flex flex-col h-[60vh] sm:h-[70vh] min-h-[360px] sm:min-h-[560px] max-h-[640px] sm:max-h-[760px] overflow-hidden border border-white/5 bg-[#0a0a0a]/60 shadow-2xl">
           {/* Chat Window */}
-          <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-10 space-y-10">
+          <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-3 sm:p-6 md:p-10 space-y-10">
             {messages.map((msg) => (
               <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} group`}>
                 <div className={`flex max-w-[90%] md:max-w-[80%] ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
@@ -146,7 +146,7 @@ const AIListener = () => {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyPress}
                 placeholder={isAiEnabled ? "写下你的心事..." : "AI 连接中..."}
-                className="w-full bg-neutral-900/30 text-neutral-200 placeholder-neutral-600 rounded-sm pl-4 pr-16 py-4 focus:outline-none focus:bg-neutral-900/50 border-b border-neutral-800 focus:border-neutral-600 transition-all resize-none h-16 font-serif"
+                className="w-full bg-neutral-900/30 text-neutral-200 placeholder-neutral-600 rounded-sm pl-4 pr-16 py-4 focus:outline-none focus:bg-neutral-900/50 border-b border-neutral-800 focus:border-neutral-600 transition-all resize-none h-14 sm:h-16 font-serif"
                 disabled={!isAiEnabled || isLoading}
               />
               <button 

@@ -170,7 +170,7 @@ const Timeline: React.FC = () => {
          <div className="flex flex-col items-center justify-center mt-24 opacity-40 hover:opacity-100 transition-opacity duration-500">
             <div className="h-16 w-[1px] bg-neutral-800 mb-4"></div>
             <Zap size={20} className="text-red-900" />
-            <span className="text-[10px] font-mono tracking-[0.5em] text-neutral-700 mt-4 uppercase">Cycle Repeats</span>
+            <span className="text-[10px] font-mono tracking-[0.5em] text-neutral-200 mt-4 uppercase">Cycle Repeats</span>
          </div>
       </div>
 

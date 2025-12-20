@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { ChevronDown, MoveRight } from 'lucide-react';
 
-const Hero: React.FC = () => {
+interface HeroProps {
+  onAdvance?: () => void;
+}
+
+const Hero: React.FC<HeroProps> = ({ onAdvance }) => {
   const [showScrollHint, setShowScrollHint] = useState(true);
 
   useEffect(() => {
@@ -11,6 +15,10 @@ const Hero: React.FC = () => {
   }, []);
 
   const scrollToWitness = () => {
+    if (onAdvance) {
+      onAdvance();
+      return;
+    }
     document.getElementById('witness')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
@@ -58,14 +66,14 @@ const Hero: React.FC = () => {
                     onClick={scrollToWitness}
                     className="group relative flex items-center gap-6 bg-white text-black px-8 py-4 transition-all duration-700 hover:bg-red-900 hover:text-white"
                 >
-                    <span className="font-serif text-lg font-bold tracking-[0.3em]">醒来</span>
+                    <span className="font-serif text-lg font-bold tracking-[0.3em]">继续</span>
                     <MoveRight className="group-hover:translate-x-2 transition-transform duration-500" size={20} />
                 </button>
                 
                 <div className="max-w-[280px] border-l border-[#222] pl-6 py-1">
                     <p className="text-xs md:text-sm text-[#777] font-serif leading-relaxed italic">
-                        “我们不是在哀悼损失，<br/>
-                        而是在夺回属于我们的时间。”
+                        “我们的青春<br/>
+                        迷失在题海和学校里”
                     </p>
                 </div>
             </div>
@@ -78,8 +86,8 @@ const Hero: React.FC = () => {
                 {/* 数据项 1 */}
                 <div className="group border-b border-[#151515] pb-6 hover:border-neutral-700 transition-colors">
                     <div className="flex justify-between items-baseline mb-3">
-                        <span className="text-[10px] font-mono text-[#444] tracking-[0.3em] uppercase group-hover:text-neutral-300 transition-colors">Sleep</span>
-                        <span className="text-4xl font-serif text-[#eee]">5.5<span className="text-xs ml-1 text-[#444]">hrs</span></span>
+                        <span className="text-[10px] font-serif text-[#444] tracking-[0.3em] uppercase group-hover:text-neutral-300 transition-colors">睡眠</span>
+                        <span className="text-4xl font-serif text-[#eee]">不足6<span className="text-xs ml-1 text-[#444]">小时</span></span>
                     </div>
                     <div className="h-[2px] w-full bg-[#111] overflow-hidden">
                         <div className="h-full bg-neutral-800 w-[35%]"></div>
@@ -89,8 +97,8 @@ const Hero: React.FC = () => {
                 {/* 数据项 2 */}
                 <div className="group border-b border-[#151515] pb-6 hover:border-neutral-700 transition-colors">
                     <div className="flex justify-between items-baseline mb-3">
-                        <span className="text-[10px] font-mono text-[#444] tracking-[0.3em] uppercase group-hover:text-neutral-300 transition-colors">Workload</span>
-                        <span className="text-4xl font-serif text-[#eee]">14<span className="text-xs ml-1 text-[#444]">hrs</span></span>
+                        <span className="text-[10px] font-serif text-[#444] tracking-[0.3em] uppercase group-hover:text-neutral-300 transition-colors">学习时间</span>
+                        <span className="text-4xl font-serif text-[#eee]">大于14<span className="text-xs ml-1 text-[#444]">小时</span></span>
                     </div>
                     <div className="h-[2px] w-full bg-[#111] overflow-hidden">
                         <div className="h-full bg-neutral-800 w-[85%]"></div>
@@ -100,7 +108,7 @@ const Hero: React.FC = () => {
                 {/* 数据项 3 */}
                 <div className="group">
                     <div className="flex justify-between items-baseline mb-3">
-                        <span className="text-[10px] font-mono text-red-900/60 tracking-[0.3em] uppercase font-bold">Pressure</span>
+                        <span className="text-[10px] font-serif text-red-900/60 tracking-[0.3em] uppercase font-bold">压力</span>
                         <span className="text-5xl font-serif text-red-800">85%</span>
                     </div>
                     <div className="h-[2px] w-full bg-[#1a0505] overflow-hidden">

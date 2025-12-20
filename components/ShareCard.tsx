@@ -69,12 +69,12 @@ export const ShareCard = () => {
   };
 
   return (
-    <div className="py-24 px-4 bg-slate-950 border-t border-slate-900/60 relative overflow-hidden">
+    <div className="py-16 sm:py-24 px-3 sm:px-4 bg-slate-950 border-t border-slate-900/60 relative overflow-hidden">
       <div className="absolute left-1/2 top-0 h-[420px] w-[900px] -translate-x-1/2 bg-gradient-to-b from-red-900/10 via-transparent to-transparent blur-2xl pointer-events-none"></div>
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight text-balance">让世界听见</h2>
-          <p className="text-slate-400 max-w-xl mx-auto">
+        <div className="text-center mb-10 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4 tracking-tight text-balance">让世界听见</h2>
+          <p className="text-slate-400 text-sm sm:text-base max-w-xl mx-auto">
             沉默不会带来改变。生成你的“生存诊断单”，保存并分享。
             <br />让更多人看到这不仅是你一个人的战斗。
           </p>
@@ -83,8 +83,8 @@ export const ShareCard = () => {
         <div className="flex flex-col md:flex-row gap-8 items-start justify-center">
           
           {/* Controls */}
-          <div className="w-full md:w-1/3 space-y-6">
-            <div className="glass-panel p-6 rounded-2xl relative overflow-hidden border border-white/5">
+          <div className="w-full md:w-1/3 space-y-5 sm:space-y-6">
+            <div className="glass-panel p-4 sm:p-6 rounded-2xl relative overflow-hidden border border-white/5">
                {/* Decorative Gradient */}
                <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-2xl transform translate-x-10 -translate-y-10 pointer-events-none"></div>
 
@@ -94,7 +94,7 @@ export const ShareCard = () => {
                   <button
                     key={t}
                     onClick={() => setTitle(t)}
-                    className={`px-3 py-1.5 text-xs rounded-lg border transition-all duration-300 ${
+                    className={`px-2.5 py-1 text-[11px] sm:text-xs rounded-lg border transition-all duration-300 ${
                       title === t 
                         ? 'bg-red-900/40 border-red-500 text-red-100 shadow-[0_0_10px_rgba(239,68,68,0.2)]' 
                         : 'bg-slate-800/50 border-slate-700 text-slate-400 hover:border-slate-500 hover:text-slate-200'
@@ -111,13 +111,13 @@ export const ShareCard = () => {
                   <textarea
                     value={text}
                     onChange={(e) => setText(e.target.value)}
-                    className="relative w-full h-32 bg-slate-900/60 border border-white/10 rounded-xl p-4 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500/30 resize-none transition-all"
+                    className="relative w-full h-28 sm:h-32 bg-slate-900/60 border border-white/10 rounded-xl p-4 text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500/30 resize-none transition-all"
                   />
               </div>
               
               <button 
                 onClick={handleRandom}
-                className="w-full flex items-center justify-center gap-2 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition-all text-sm group"
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-lg transition-all text-xs sm:text-sm group"
               >
                 <RefreshCw size={14} className="group-hover:rotate-180 transition-transform duration-500"/> 随机生成文案
               </button>
@@ -127,7 +127,7 @@ export const ShareCard = () => {
               <button 
                 onClick={handleDownload}
                 disabled={isGenerating}
-                className="w-full py-3.5 bg-gradient-to-r from-red-800 to-red-700 hover:from-red-700 hover:to-red-600 text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(153,27,27,0.3)] hover:shadow-[0_0_30px_rgba(153,27,27,0.5)] transform hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none"
+                className="w-full py-3 sm:py-3.5 bg-gradient-to-r from-red-800 to-red-700 hover:from-red-700 hover:to-red-600 text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm sm:text-base shadow-[0_0_20px_rgba(153,27,27,0.3)] hover:shadow-[0_0_30px_rgba(153,27,27,0.5)] transform hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none"
               >
                 {isGenerating ? <Loader2 size={20} className="animate-spin" /> : <Camera size={20} />}
                 {isGenerating ? "生成中..." : "保存为图片"}
@@ -135,7 +135,7 @@ export const ShareCard = () => {
 
               <button 
                 onClick={handleCopyLink}
-                className="w-full py-3.5 bg-slate-800/70 hover:bg-slate-700/70 text-slate-300 rounded-xl font-medium transition-all flex items-center justify-center gap-2 border border-white/10 hover:border-white/20"
+                className="w-full py-3 sm:py-3.5 bg-slate-800/70 hover:bg-slate-700/70 text-slate-300 rounded-xl font-medium transition-all flex items-center justify-center gap-2 text-sm sm:text-base border border-white/10 hover:border-white/20"
               >
                 {copied ? <Check size={18} className="text-green-400"/> : <Copy size={18} />}
                 {copied ? <span className="text-green-400">链接已复制</span> : "复制网站链接"}
@@ -145,10 +145,10 @@ export const ShareCard = () => {
 
           {/* The Card (Visual Preview) */}
           <div className="w-full md:w-2/5 flex justify-center">
-            <div className="perspective-1000 w-full max-w-sm">
+            <div className="perspective-1000 w-full max-w-[320px] sm:max-w-sm">
               <div 
                 ref={cardRef}
-                className="relative mx-auto bg-slate-950 border-8 border-slate-800 p-8 rounded-sm shadow-2xl aspect-[3/5] flex flex-col justify-between overflow-hidden select-none transition-transform md:hover:scale-[1.02] md:hover:rotate-1"
+                className="relative mx-auto bg-slate-950 border-4 sm:border-8 border-slate-800 p-6 sm:p-8 rounded-sm shadow-2xl aspect-[3/5] flex flex-col justify-between overflow-hidden select-none transition-transform md:hover:scale-[1.02] md:hover:rotate-1"
               >
                 
                 <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(circle_at_center,#334155_1px,transparent_1px)] [background-size:24px_24px]"></div>
@@ -170,7 +170,7 @@ export const ShareCard = () => {
                     <span className="inline-block px-2 py-0.5 bg-slate-800 text-slate-300 text-xs font-mono rounded">
                       IDENTITY: {title}
                     </span>
-                    <p className="text-2xl md:text-3xl font-serif font-bold text-slate-100 leading-tight break-words">
+                    <p className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-slate-100 leading-tight break-words">
                       “{text}”
                     </p>
                   </div>
@@ -200,7 +200,7 @@ export const ShareCard = () => {
                     </div>
                     
                     {/* Real QR Code */}
-                    <div className="bg-white p-1.5 rounded-sm">
+                    <div className="bg-white p-1.5 rounded-sm scale-90 sm:scale-100 origin-bottom-right">
                         {currentUrl && (
                             <QRCodeCanvas 
                                 value={currentUrl}
