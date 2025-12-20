@@ -217,7 +217,7 @@ const Guestbook: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
           
           {/* Input Form */}
-          <div className="md:col-span-4 sticky top-8">
+          <div className="md:col-span-4 md:sticky md:top-8">
             <div className="glass-panel p-6 rounded-2xl">
               <h3 className="text-lg font-bold text-slate-200 mb-6 flex items-center gap-2">
                 <Send size={18} className="text-red-500" />

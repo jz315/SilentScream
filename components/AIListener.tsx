@@ -102,9 +102,9 @@ const AIListener = () => {
           </p>
         </div>
 
-        <div className="glass-panel rounded-sm flex flex-col h-[70vh] min-h-[560px] max-h-[760px] overflow-hidden border border-white/5 bg-[#0a0a0a]/60 shadow-2xl">
+        <div className="glass-panel rounded-sm flex flex-col h-[65vh] sm:h-[70vh] min-h-[420px] sm:min-h-[560px] max-h-[700px] sm:max-h-[760px] overflow-hidden border border-white/5 bg-[#0a0a0a]/60 shadow-2xl">
           {/* Chat Window */}
-          <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-6 md:p-10 space-y-10">
+          <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-10 space-y-10">
             {messages.map((msg) => (
               <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} group`}>
                 <div className={`flex max-w-[90%] md:max-w-[80%] ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
@@ -139,7 +139,7 @@ const AIListener = () => {
           </div>
 
           {/* Input Area */}
-          <div className="p-6 md:p-8 bg-[#0a0a0a] border-t border-neutral-900">
+          <div className="p-4 sm:p-6 md:p-8 bg-[#0a0a0a] border-t border-neutral-900">
             <div className="relative group max-w-3xl mx-auto">
               <textarea
                 value={input}

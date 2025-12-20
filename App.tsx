@@ -20,14 +20,17 @@ const App: React.FC = () => {
   return (
     <div
       id="app-scroll"
-      className={`h-screen overflow-y-scroll bg-[#050505] text-neutral-200 font-sans antialiased tracking-wide scroll-smooth ${
-        isAwakened ? 'snap-none' : 'snap-y snap-mandatory'
-      }`}
+      className={`h-screen overflow-y-scroll bg-[#050505] text-neutral-200 font-sans antialiased tracking-wide scroll-smooth ${isAwakened ? 'snap-none' : 'snap-y snap-mandatory'
+        }`}
     >
       <div className="vignette" />
-      
+
       <section className="snap-start h-screen w-full relative">
         <Hero />
+      </section>
+
+      <section ref={timelineRef} className="snap-start min-h-screen w-full relative">
+        <Timeline />
       </section>
 
       <section id="ironhouse" className="snap-start h-screen w-full relative">
@@ -36,26 +39,24 @@ const App: React.FC = () => {
 
       {isAwakened && (
         <>
-          <section ref={timelineRef} className="snap-start min-h-screen w-full relative">
-            <Timeline />
-          </section>
-          
+
+
           <section className="snap-start min-h-screen w-full relative">
             <DataVisuals />
           </section>
-          
+
           <section className="snap-start min-h-screen w-full relative">
             <Manifesto />
           </section>
-          
+
           <section className="snap-start min-h-screen w-full relative">
             <AIListener />
           </section>
-          
+
           <div className="snap-start">
-             <ShareCard />
-             <Guestbook />
-             <Footer />
+            <ShareCard />
+            <Guestbook />
+            <Footer />
           </div>
         </>
       )}

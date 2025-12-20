@@ -1,23 +1,29 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { TimelineEvent } from '../types';
-import { Clock, BookOpen, Moon, Coffee, AlertCircle, Zap } from 'lucide-react';
+import { Clock, BookOpen, Moon, Coffee, AlertCircle, Zap, Activity } from 'lucide-react';
 
-const events: TimelineEvent[] = [
-  { time: '05:45', activity: '强制唤醒 / 起床', mood: 'Exhausted', icon: 'clock' },
-  { time: '06:20', activity: '早读 (背诵直到嘶哑)', mood: 'Mechanical', icon: 'book' },
-  { time: '07:30', activity: '上午课程 (4节连轴转)', mood: 'Focused', icon: 'book' },
-  { time: '12:00', activity: '午餐 (15分钟速食)', mood: 'Rushed', icon: 'coffee' },
-  { time: '12:40', activity: '午休 (趴在桌上麻木的手臂)', mood: 'Uncomfortable', icon: 'moon' },
-  { time: '13:30', activity: '下午课程 + 测验', mood: 'Draining', icon: 'alert' },
-  { time: '17:30', activity: '晚餐 (被挤压的喘息)', mood: 'Numb', icon: 'coffee' },
-  { time: '18:15', activity: '晚自习 (无尽的题海)', mood: 'Stressed', icon: 'book' },
-  { time: '22:30', activity: '放学回家 / 宿舍洗漱', mood: 'Heavy', icon: 'moon' },
-  { time: '23:30', activity: '家庭作业 (第二轮战斗)', mood: 'Despair', icon: 'book' },
-  { time: '00:45', activity: '尝试入睡', mood: 'Anxious', icon: 'moon' },
+// 扩展类型以包含中式时辰描述
+interface ExtendedEvent extends TimelineEvent {
+  chineseTime: string;
+  sealChar: string; // 印章字
+}
+
+const events: ExtendedEvent[] = [
+  { time: '05:45', chineseTime: '卯时 · 破晓', activity: '强制唤醒 / 起床', mood: 'Exhausted', icon: 'clock', sealChar: '困' },
+  { time: '06:20', chineseTime: '卯时 · 晨读', activity: '早读 (背诵直到嘶哑)', mood: 'Mechanical', icon: 'book', sealChar: '械' },
+  { time: '07:30', chineseTime: '辰时 · 授课', activity: '上午课程 (4节连轴转)', mood: 'Focused', icon: 'book', sealChar: '紧' },
+  { time: '12:00', chineseTime: '午时 · 进食', activity: '午餐 (15分钟速食)', mood: 'Rushed', icon: 'coffee', sealChar: '急' },
+  { time: '12:40', chineseTime: '午时 · 假寐', activity: '午休 (趴在桌上麻木的手臂)', mood: 'Uncomfortable', icon: 'moon', sealChar: '麻' },
+  { time: '13:30', chineseTime: '未时 · 测验', activity: '下午课程 + 测验', mood: 'Draining', icon: 'alert', sealChar: '压' },
+  { time: '17:30', chineseTime: '酉时 · 喘息', activity: '晚餐 (被挤压的喘息)', mood: 'Numb', icon: 'coffee', sealChar: '木' },
+  { time: '18:15', chineseTime: '酉时 · 题海', activity: '晚自习 (无尽的题海)', mood: 'Stressed', icon: 'book', sealChar: '躁' },
+  { time: '22:30', chineseTime: '亥时 · 归巢', activity: '放学回家 / 宿舍洗漱', mood: 'Heavy', icon: 'moon', sealChar: '沉' },
+  { time: '23:30', chineseTime: '子时 · 夜战', activity: '家庭作业 (第二轮战斗)', mood: 'Despair', icon: 'book', sealChar: '绝' },
+  { time: '00:45', chineseTime: '丑时 · 难眠', activity: '尝试入睡', mood: 'Anxious', icon: 'moon', sealChar: '虑' },
 ];
 
 interface TimelineItemProps {
-  event: TimelineEvent;
+  event: ExtendedEvent;
   index: number;
 }
 
@@ -28,125 +34,152 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ event, index }) => {
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
+        if (entry.isIntersecting) setIsVisible(true);
       },
-      { threshold: 0.2, rootMargin: '0px 0px -100px 0px' }
+      { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
     );
-
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-
+    if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
 
   const getIcon = (iconName: string) => {
+    const props = { size: 16, strokeWidth: 1.5 };
     switch (iconName) {
-      case 'book': return <BookOpen size={20} />;
-      case 'moon': return <Moon size={20} />;
-      case 'coffee': return <Coffee size={20} />;
-      case 'alert': return <AlertCircle size={20} />;
-      default: return <Clock size={20} />;
+      case 'book': return <BookOpen {...props} />;
+      case 'moon': return <Moon {...props} />;
+      case 'coffee': return <Coffee {...props} />;
+      case 'alert': return <AlertCircle {...props} />;
+      default: return <Clock {...props} />;
     }
-  };
-
-  const getMoodColor = (mood: string) => {
-    const map: {[key: string]: string} = {
-      'Exhausted': 'bg-slate-800 text-slate-400 border border-slate-700',
-      'Mechanical': 'bg-gray-800 text-gray-300 border border-gray-700',
-      'Focused': 'bg-blue-950/30 text-blue-300 border border-blue-900',
-      'Rushed': 'bg-orange-950/30 text-orange-300 border border-orange-900',
-      'Uncomfortable': 'bg-yellow-950/30 text-yellow-300 border border-yellow-900',
-      'Draining': 'bg-red-950/30 text-red-300 border border-red-900',
-      'Numb': 'bg-slate-900 text-slate-500 border border-slate-800',
-      'Stressed': 'bg-red-950/50 text-red-200 border border-red-800',
-      'Heavy': 'bg-purple-950/30 text-purple-300 border border-purple-900',
-      'Despair': 'bg-black text-slate-500 border border-slate-800',
-      'Anxious': 'bg-indigo-950/30 text-indigo-300 border border-indigo-900',
-    };
-    return map[mood] || 'bg-slate-800 text-slate-400';
   };
 
   return (
     <div 
-        ref={ref}
-        className={`relative flex items-center mb-16 ${index % 2 === 0 ? 'md:flex-row-reverse' : ''} group transition-all duration-1000 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}
+      ref={ref}
+      className={`relative grid grid-cols-[1fr_auto_1fr] gap-4 md:gap-12 w-full max-w-5xl mx-auto group mb-8 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
     >
-        {/* Dot with Pulse Effect */}
-        <div className="absolute left-8 md:left-1/2 transform -translate-x-1/2 z-10 flex items-center justify-center">
-            <div className={`w-3 h-3 rounded-full bg-slate-950 border border-slate-500 transition-all duration-300 z-10 ${isVisible ? 'scale-100' : 'scale-0'}`}></div>
-            {/* Ripple */}
-            <div className={`absolute w-8 h-8 rounded-full border border-slate-700 transition-opacity ${isVisible ? 'opacity-0 group-hover:opacity-100 group-hover:animate-ping' : 'opacity-0'}`}></div>
-        </div>
-        
-        {/* Content Spacer */}
-        <div className="hidden md:block w-1/2"></div>
-        
-        {/* Card */}
-        <div className={`ml-20 md:ml-0 md:w-1/2 ${index % 2 === 0 ? 'md:pr-20' : 'md:pl-20'}`}>
-            <div className="glass-panel spotlight-card p-6 rounded-xl relative hover:-translate-y-1 transition-transform duration-500 border border-white/5">
-            
-            {/* Connector Line (Horizontal) */}
-            <div className={`absolute top-1/2 -translate-y-1/2 h-[1px] bg-gradient-to-r from-slate-700 to-transparent w-12 md:w-20 group-hover:from-red-500/50 transition-colors ${index % 2 === 0 ? '-right-12 md:-right-20 rotate-180' : '-left-12 md:-left-20 hidden md:block'} origin-left ${isVisible ? 'scale-x-100' : 'scale-x-0'} duration-1000 delay-300`}></div>
-            <div className={`absolute top-1/2 -translate-y-1/2 h-[1px] bg-gradient-to-r from-slate-700 to-transparent w-12 group-hover:from-red-500/50 transition-colors md:hidden -left-12 origin-left ${isVisible ? 'scale-x-100' : 'scale-x-0'} duration-1000 delay-300`}></div>
+      {/* Left Side: Time Info */}
+      <div className="flex flex-col items-end justify-center py-6 text-right relative">
+        <span className="font-serif text-xs md:text-sm text-neutral-500 tracking-[0.2em] mb-1 opacity-60">
+            {event.chineseTime}
+        </span>
+        <span className={`font-mono text-2xl md:text-4xl font-light tracking-tighter transition-colors duration-500 ${isVisible ? 'text-neutral-200' : 'text-neutral-800'}`}>
+            {event.time}
+        </span>
+        {/* Decorative thin line sticking out */}
+        <div className={`absolute right-0 top-1/2 w-8 h-[1px] bg-neutral-800 -mr-4 md:-mr-12 transition-all duration-700 ${isVisible ? 'scale-x-100' : 'scale-x-0'} origin-right`}></div>
+      </div>
 
-            <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/5">
-                <span className="font-mono text-red-400 font-bold text-xl tracking-wider">{event.time}</span>
-                <div className="text-slate-500 group-hover:text-slate-200 transition-colors">
-                {getIcon(event.icon)}
-                </div>
-            </div>
-            
-            <h3 className="text-lg font-bold text-slate-200 mb-4 tracking-wide">{event.activity}</h3>
-            
-            <div className="flex items-center justify-between">
-                <span className={`inline-block px-3 py-1 text-[10px] uppercase tracking-wider font-semibold rounded-sm ${getMoodColor(event.mood)}`}>
-                {event.mood}
-                </span>
-                <span className="text-[10px] text-slate-700 font-mono">0{index + 1}</span>
-            </div>
-            </div>
+      {/* Center: The Axis */}
+      <div className="relative flex flex-col items-center">
+        {/* The Vertical Line Segment */}
+        <div className="h-full w-[1px] bg-neutral-800 group-hover:bg-neutral-700 transition-colors relative">
+            {/* The Dot / Node */}
+            <div className={`absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 w-2 h-2 rotate-45 border border-neutral-600 bg-[#050505] transition-all duration-500 z-10 ${isVisible ? 'scale-100' : 'scale-0'} group-hover:border-red-900 group-hover:bg-red-950`}></div>
         </div>
+      </div>
+
+      {/* Right Side: Content Card */}
+      <div className="py-4 pr-4 md:pr-0">
+        <div className="relative p-5 border-l border-neutral-900 hover:border-red-900/30 transition-colors duration-500 bg-gradient-to-r from-white/[0.02] to-transparent">
+          
+          <h3 className="text-base md:text-lg font-serif text-neutral-300 tracking-wider mb-3 group-hover:text-white transition-colors">
+            {event.activity}
+          </h3>
+          
+          <div className="flex items-center gap-4">
+            <div className="text-neutral-600 group-hover:text-red-800 transition-colors">
+                {getIcon(event.icon)}
+            </div>
+            <div className="h-[1px] w-12 bg-neutral-900"></div>
+            
+            {/* The "Seal" (Mood) */}
+            <div className="relative">
+                <div className={`
+                    w-8 h-8 flex items-center justify-center border border-red-900/40 rounded-sm 
+                    text-red-800 font-serif text-sm bg-red-950/10 select-none
+                    group-hover:bg-red-900 group-hover:text-white group-hover:border-red-800
+                    transition-all duration-500 transform ${isVisible ? 'scale-100 rotate-0' : 'scale-150 rotate-12 opacity-0'}
+                `}>
+                    {event.sealChar}
+                </div>
+                {/* Mood text (English) - subtle subscript */}
+                <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[8px] uppercase tracking-widest text-neutral-700 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    {event.mood}
+                </span>
+            </div>
+          </div>
+
+          {/* Background Decor - Noise or Texture */}
+          <div className="absolute top-0 right-0 p-2 opacity-10 pointer-events-none">
+             <span className="font-mono text-[10px] text-neutral-500">LOG_0{index + 1}</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
 const Timeline: React.FC = () => {
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const cards = document.querySelectorAll('.spotlight-card');
-    cards.forEach(card => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        (card as HTMLElement).style.setProperty('--mouse-x', `${x}px`);
-        (card as HTMLElement).style.setProperty('--mouse-y', `${y}px`);
-    });
-  };
-
   return (
-    <div id="witness" className="py-24 px-4 bg-slate-950 relative" onMouseMove={handleMouseMove}>
-       {/* Ambient Light */}
-       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[800px] bg-indigo-950/10 rounded-full blur-[100px] pointer-events-none"></div>
+    <div id="witness" className="min-h-screen py-32 px-4 bg-[#050505] relative overflow-hidden selection:bg-red-900/30">
+       
+       {/* Background Elements: Subtle Vertical Lines */}
+       <div className="absolute inset-0 flex justify-center pointer-events-none opacity-20">
+           <div className="w-[1px] h-full bg-neutral-900 mr-[300px] hidden md:block"></div>
+           <div className="w-[1px] h-full bg-neutral-900 ml-[300px] hidden md:block"></div>
+       </div>
 
-      <h2 className="text-4xl md:text-5xl font-black text-center mb-24 text-slate-100 relative z-10">
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-slate-200 to-slate-500">机械的一天</span>
-      </h2>
+       {/* Giant Watermark Character */}
+       <div className="absolute top-20 left-10 md:left-20 pointer-events-none opacity-[0.03] select-none">
+            <span className="font-serif font-bold text-[15rem] leading-none text-white vertical-rl">规训</span>
+       </div>
+
+      {/* Header Area */}
+      <div className="max-w-5xl mx-auto mb-24 relative z-10 text-center md:text-left pl-0 md:pl-20">
+        <div className="inline-flex flex-col items-center md:items-start gap-2">
+            <div className="flex items-center gap-4">
+                <Activity size={18} className="text-red-900" />
+                <span className="text-[10px] md:text-xs font-mono tracking-[0.6em] text-red-900 uppercase">System Status: Critical</span>
+            </div>
+            <h2 className="text-4xl md:text-6xl font-serif font-bold text-neutral-200 tracking-widest mt-4">
+                <span className="relative inline-block">
+                    机械
+                    <span className="absolute -top-2 -right-2 w-2 h-2 bg-red-900 rounded-full animate-pulse"></span>
+                </span>
+                
+                <span className="text-neutral-400">的一天</span>
+            </h2>
+            <p className="text-xs md:text-sm text-neutral-600 font-serif tracking-[0.2em] mt-2 italic max-w-md">
+                "时间不仅是容器，更是刑具。"
+            </p>
+        </div>
+      </div>
       
-      <div className="max-w-4xl mx-auto relative">
-        {/* Gradient Vertical Line */}
-        <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-slate-700 to-transparent transform md:-translate-x-1/2"></div>
+      {/* Timeline Container */}
+      <div className="relative max-w-6xl mx-auto">
+        {/* Gradient Fade for Line Top/Bottom */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-0 w-[1px] h-32 bg-gradient-to-b from-transparent to-neutral-800 z-0"></div>
+        <div className="absolute left-1/2 -translate-x-1/2 bottom-0 w-[1px] h-32 bg-gradient-to-t from-transparent to-neutral-800 z-0"></div>
 
         {events.map((event, index) => (
           <TimelineItem key={index} event={event} index={index} />
         ))}
         
         {/* End Marker */}
-         <div className="absolute left-8 md:left-1/2 bottom-[-40px] transform -translate-x-1/2 text-slate-800 animate-pulse">
-            <Zap size={24} />
+         <div className="flex flex-col items-center justify-center mt-24 opacity-40 hover:opacity-100 transition-opacity duration-500">
+            <div className="h-16 w-[1px] bg-neutral-800 mb-4"></div>
+            <Zap size={20} className="text-red-900" />
+            <span className="text-[10px] font-mono tracking-[0.5em] text-neutral-700 mt-4 uppercase">Cycle Repeats</span>
          </div>
       </div>
+
+      <style>{`
+        .vertical-rl {
+          writing-mode: vertical-rl;
+          text-orientation: upright;
+        }
+      `}</style>
     </div>
   );
 };

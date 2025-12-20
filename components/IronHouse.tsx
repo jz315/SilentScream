@@ -7,6 +7,37 @@ const DIALOGUES = [
   { luxun: "愿中国青年都摆脱冷气，只是向上走。", reality: "我们不想做冷漠的刷题机器，我们要健康！" },
   { luxun: "真的猛士，敢于直面惨淡的人生。", reality: "哪怕在分数至上的世界里，也要守住灵魂。" },
   { luxun: "不在沉默中爆发，就在沉默中灭亡。", reality: "我不再沉默，我要发出我的声音！" },
+
+  {
+    luxun: "我想：人类的悲欢并不相通。",
+    reality: "屏幕里满是苦难，评论区却在狂欢，我们什么时候变得如此麻木了？"
+  },
+  {
+    luxun: "我翻开历史一查……满本都写着两个字是‘吃人’！",
+    reality: "在这个唯效率论的时代，系统正在一点点吞噬掉我们的生活和健康。"
+  },
+  {
+    luxun: "有一分热，发一分光，就令萤火一般，也可以在黑暗里发一点光，不必等候炬火。",
+    reality: "即便我只是个普通人，我的坚持和善良也依然有它的意义。"
+  },
+  {
+    luxun: "横眉冷对千夫指，俯首甘为孺子牛。",
+    reality: "不向那些僵化的偏见低头，只为真正值得守护的理想而弯腰。"
+  },
+
+
+  {
+    luxun: "贪安稳就没有自由，要自由就要历些危险。只有这两条路。",
+    reality: "在体制的安稳与梦想的冒险之间，我还要在围城里徘徊多久？"
+  },
+  {
+    luxun: "可惜他们大抵唯有‘以前比现在好’，或者‘将来比现在好’，绝没有‘现在比现在好’的。",
+    reality: "我们总是在怀念童年或寄望退休，却唯独弄丢了当下的快乐。"
+  },
+  {
+    luxun: "悲剧将人生的有价值的东西毁灭给人看。",
+    reality: "看着那些满怀理想的年轻人被生活磨平了棱角，这才是最深重的悲哀。"
+  }
 ];
 
 interface IronHouseProps {
@@ -32,14 +63,14 @@ interface Particle {
 }
 
 const IronHouse: React.FC<IronHouseProps> = ({ onBreak }) => {
-  const totalHits = 15;
+  const totalHits = 23;
   const [hits, setHits] = useState(0);
   const [shards, setShards] = useState<ShardPiece[]>([]);
   const [currentDialogue, setCurrentDialogue] = useState<number>(-1);
   const [isBroken, setIsBroken] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
   const [showCommand, setShowCommand] = useState(false); // 控制“打破它”显示
-  
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const animationFrameRef = useRef<number>();
@@ -149,7 +180,7 @@ const IronHouse: React.FC<IronHouseProps> = ({ onBreak }) => {
   };
 
   return (
-    <div className="relative h-full w-full bg-[#050505] overflow-hidden select-none cursor-crosshair flex items-center justify-center">
+    <div className="relative h-full w-full bg-[#050505] overflow-hidden select-none cursor-crosshair flex items-center justify-center px-4 sm:px-8">
       <style>{`
         @keyframes fade-in-blur {
           0% { opacity: 0; filter: blur(20px); transform: translateY(10px) scale(0.9); }
@@ -175,6 +206,9 @@ const IronHouse: React.FC<IronHouseProps> = ({ onBreak }) => {
         .animate-command-flash { animation: command-flash 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .animate-shake-hard { animation: shake-hard 0.1s ease-in-out infinite; }
         .vertical-text { writing-mode: vertical-rl; }
+        @media (max-width: 640px) {
+          .vertical-text { writing-mode: horizontal-tb; }
+        }
       `}</style>
 
       {/* Background Dawn */}
@@ -183,7 +217,7 @@ const IronHouse: React.FC<IronHouseProps> = ({ onBreak }) => {
       {/* Main Container */}
       <div
         onClick={handleStrike}
-        className={`relative w-full max-w-5xl aspect-video bg-[#0a0a0a] border border-neutral-900 transition-all duration-1000 overflow-hidden 
+        className={`relative w-full max-w-5xl aspect-[4/5] sm:aspect-video bg-[#0a0a0a] border border-neutral-900 transition-all duration-1000 overflow-hidden 
           ${isBroken ? 'scale-150 opacity-0 pointer-events-none blur-2xl' : 'opacity-100'} 
           ${isShaking ? 'animate-shake-hard' : ''}`}
       >
@@ -192,9 +226,9 @@ const IronHouse: React.FC<IronHouseProps> = ({ onBreak }) => {
           {shards.map((shard) => (
             <div key={shard.id} className="absolute inset-0">
               <div className="absolute inset-0" style={{ clipPath: `polygon(${shard.points})`, background: 'radial-gradient(circle, #fff 0%, #fbbf24 40%, transparent 80%)', opacity: 0.4 }} />
-              <div 
+              <div
                 className="absolute inset-0 bg-[#111] border border-white/5"
-                style={{ 
+                style={{
                   clipPath: `polygon(${shard.points})`,
                   transform: `translate(${shard.flyX}px, ${shard.flyY}px) rotate(${shard.rotate}deg)`,
                   transition: 'transform 1.5s cubic-bezier(0.16, 1, 0.3, 1)'
@@ -211,31 +245,31 @@ const IronHouse: React.FC<IronHouseProps> = ({ onBreak }) => {
           {/* 初始状态 */}
           {hits === 0 && !showCommand && (
             <div className="text-center mix-blend-difference">
-              <h3 className="text-6xl md:text-8xl font-serif font-bold text-neutral-600 tracking-[0.2em] uppercase">铁屋子</h3>
-              <div className="text-2xl md:text-3xl font-serif text-neutral-600 mt-4 tracking-widest italic">——呐喊</div>
-              <p className="text-neutral-700 mt-12 font-mono text-xs tracking-[0.5em] animate-pulse">打破一切吧！</p>
+              <h3 className="text-4xl sm:text-6xl md:text-8xl font-serif font-bold text-neutral-600 tracking-[0.15em] sm:tracking-[0.2em] uppercase">铁屋子</h3>
+              <div className="text-lg sm:text-2xl md:text-3xl font-serif text-neutral-600 mt-4 tracking-[0.2em] sm:tracking-widest italic">——呐喊</div>
+              <p className="text-neutral-700 mt-8 sm:mt-12 font-mono text-[10px] sm:text-xs tracking-[0.3em] sm:tracking-[0.5em] animate-pulse">打破一切吧！</p>
             </div>
           )}
 
           {/* 瞬时指令 */}
           {showCommand && (
-            <h3 className="text-7xl md:text-[12rem] font-serif font-black text-white tracking-[0.4em] animate-command-flash">打破它</h3>
+            <h3 className="text-5xl sm:text-7xl md:text-[12rem] font-serif font-black text-white tracking-[0.2em] sm:tracking-[0.4em] animate-command-flash">打破它</h3>
           )}
         </div>
 
         {/* Ethereal Dialogues */}
         {currentDialogue >= 0 && !isBroken && (
           <div className="absolute inset-0 z-40 pointer-events-none">
-            <div key={`lx-${currentDialogue}`} className="absolute left-[12%] top-[15%] animate-fade-in-blur vertical-text">
-              <p className="text-3xl md:text-5xl font-serif text-neutral-300/70 tracking-[0.3em] leading-relaxed italic drop-shadow-2xl">
+            <div key={`lx-${currentDialogue}`} className="absolute left-[6%] top-[8%] sm:left-[12%] sm:top-[15%] animate-fade-in-blur vertical-text">
+              <p className="text-xl sm:text-3xl md:text-5xl font-serif text-neutral-300/70 tracking-[0.16em] sm:tracking-[0.3em] leading-snug sm:leading-relaxed italic drop-shadow-2xl">
                 {DIALOGUES[currentDialogue].luxun}
               </p>
             </div>
 
-            <div key={`re-${currentDialogue}`} className="absolute right-[8%] bottom-[25%] max-w-[45%] animate-slide-in-right">
+            <div key={`re-${currentDialogue}`} className="absolute right-[6%] bottom-[18%] max-w-[85%] sm:right-[8%] sm:bottom-[25%] sm:max-w-[45%] animate-slide-in-right">
               <div className="relative pl-6">
                 <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-red-600/60 to-transparent" />
-                <p className="text-xl md:text-2xl font-sans font-light text-red-500/80 tracking-widest leading-relaxed text-right">
+                <p className="text-base sm:text-xl md:text-2xl font-sans font-light text-red-500/80 tracking-[0.08em] sm:tracking-widest leading-relaxed text-left sm:text-right">
                   {DIALOGUES[currentDialogue].reality}
                 </p>
               </div>
@@ -246,25 +280,25 @@ const IronHouse: React.FC<IronHouseProps> = ({ onBreak }) => {
 
       {/* Post-Break State */}
       {isBroken && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-50 animate-fade-in-blur p-8 text-slate-900">
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-50 animate-fade-in-blur p-6 sm:p-8 text-slate-900">
           <div className="mb-12 relative animate-bounce">
-            <Sun size={120} className="text-orange-500 opacity-80" strokeWidth={1} />
+            <Sun size={120} className="text-orange-500 opacity-80 w-20 h-20 sm:w-28 sm:h-28" strokeWidth={1} />
             <div className="absolute inset-0 bg-orange-400 blur-[100px] opacity-30 -z-10" />
           </div>
-          <h2 className="text-6xl md:text-9xl font-serif font-black mb-8 tracking-tighter">天亮了。</h2>
+          <h2 className="text-4xl sm:text-6xl md:text-9xl font-serif font-black mb-8 tracking-tighter">天亮了。</h2>
           <div className="space-y-6 text-center">
-            <p className="text-xl md:text-3xl font-serif italic text-slate-700">"愿中国青年都摆脱冷气，只是向上走。"</p>
-            <p className="text-lg md:text-2xl font-serif text-slate-500 italic">"此后如竟没有炬火：我便是唯一的光。"</p>
+            <p className="text-lg sm:text-xl md:text-3xl font-serif italic text-slate-700">"愿中国青年都摆脱冷气，只是向上走。"</p>
+            <p className="text-base sm:text-lg md:text-2xl font-serif text-slate-500 italic">"此后如竟没有炬火：我便是唯一的光。"</p>
           </div>
         </div>
       )}
 
       {/* Minimal Progress Bar */}
       {!isBroken && hits > 0 && (
-        <div className="absolute bottom-12 w-48 h-[1px] bg-neutral-900 overflow-hidden">
-          <div 
-            className="h-full bg-white/40 transition-all duration-500" 
-            style={{ width: `${(hits / totalHits) * 100}%` }} 
+        <div className="absolute bottom-6 sm:bottom-12 w-32 sm:w-48 h-[1px] bg-neutral-900 overflow-hidden">
+          <div
+            className="h-full bg-white/40 transition-all duration-500"
+            style={{ width: `${(hits / totalHits) * 100}%` }}
           />
         </div>
       )}
