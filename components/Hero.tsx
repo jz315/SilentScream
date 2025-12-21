@@ -98,7 +98,7 @@ const Hero: React.FC<HeroProps> = ({ onAdvance }) => {
                 <div className="group border-b border-[#151515] pb-6 hover:border-neutral-700 transition-colors">
                     <div className="flex justify-between items-baseline mb-3">
                         <span className="text-[10px] font-serif text-[#444] tracking-[0.3em] uppercase group-hover:text-neutral-300 transition-colors">学习时间</span>
-                        <span className="text-4xl font-serif text-[#eee]">大于14<span className="text-xs ml-1 text-[#444]">小时</span></span>
+                        <span className="text-4xl font-serif text-[#eee]">超过14<span className="text-xs ml-1 text-[#444]">小时</span></span>
                     </div>
                     <div className="h-[2px] w-full bg-[#111] overflow-hidden">
                         <div className="h-full bg-neutral-800 w-[85%]"></div>
